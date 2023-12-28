@@ -6,6 +6,9 @@ const cors = require('cors')
 app.use(cors())
 
 app.use(morgan('tiny'))
+app.use(express.static('dist'))
+
+
 
 
 let persons=
@@ -32,12 +35,12 @@ let persons=
     }
 ];
 
-app.get('/api/persons', (request,response) => {
+app.get('/persons', (request,response) => {
+    console.log('ghgh');
     response.json(persons);
 })
 
 app.get('/info',(request, response) => {
-
     const numPersons = persons.length
     const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
     const c= new Date().toLocaleString('en-IN',options)
@@ -48,7 +51,7 @@ app.get('/info',(request, response) => {
     
 })
 
-app.get("/api/persons/:id", (req,res) =>{
+app.get("/persons/:id", (req,res) =>{
     let id = Number(req.params.id)
     const element= persons.find(person=> person.id===id)
     if(element){
@@ -59,15 +62,17 @@ app.get("/api/persons/:id", (req,res) =>{
 
 })
 
-app.delete("/api/persons/:id", (req,res) =>{
+app.delete("/persons/:id", (req,res) =>{
     let id = Number(req.params.id)
-    persons= persons.find(person=> person.id!==id)
+    console.log(id);
+    persons= persons.filter(person=> person.id!==id)
+    console.log(persons);
     res.status(204).end()
 
 })
 
-app.post("/api/persons", (req,res) =>{
-
+app.post("/persons", (req,res) =>{
+    console.log(req.body);
     const content= req.body
     let name = content.name
     let number= content.number
@@ -75,7 +80,6 @@ app.post("/api/persons", (req,res) =>{
     number=persons.find(person => person.number===number)
     const decimal= Math.random() *1000
     content.id=Math.floor(decimal)
-    console.log(name);
     if(name && number){
         res.json({
             "204": "enter unique name/number"
